@@ -16,3 +16,9 @@ Proof-of-concept for a deployment/rollback flow using github actions and release
   - The last release should be marked as a draft
   - A deployment should be done to the `production` environment using the selected release
 
+## Run Sample App Locally
+
+```sh
+docker build --build-arg APP_VERSION=local -t action-deployment-poc:local .
+docker run -p 7890:80 action-deployment-poc:local
+```

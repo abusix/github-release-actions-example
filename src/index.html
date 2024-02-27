@@ -1,0 +1,27 @@
+<html>
+  <head>
+    <title>Action Deployment POC - Sample App</title>
+  </head>
+  <body>
+    <h1>Action Deployment POC - Sample App</h1>
+    <p>
+      This sample app has been created simply for use testing the
+      action-deployment-poc
+    </p>
+    <p id="version">Loading version...</p>
+    <script>
+      fetch("./info.json")
+        .then((response) => response.json())
+        .then((data) => {
+          document.getElementById(
+            "version"
+          ).innerHTML = `Version: <strong>${data.version}</strong>`;
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          document.getElementById("version").innerHTML =
+            "Error loading version";
+        });
+    </script>
+  </body>
+</html>
