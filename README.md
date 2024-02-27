@@ -16,6 +16,13 @@ Proof-of-concept for a deployment/rollback flow using github actions and release
   - The last release should be marked as a draft
   - A deployment should be done to the `production` environment using the selected release
 
+## Implementation
+
+- https://github.com/marketplace/actions/get-release is used to get the id of the last release
+- https://github.com/softprops/action-gh-release is used to create the new release
+- https://github.com/irongut/EditRelease is used to edit the release if it already exists
+- `git log --pretty=oneline tagA...tagB` is used to get the commit messages since the last release
+
 ## Run Sample App Locally
 
 ```sh
