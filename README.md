@@ -16,9 +16,23 @@ Proof-of-concept for a deployment/rollback flow using github actions and release
   - The last release should be marked as a draft
   - A deployment should be done to the `production` environment using the selected release
 
+## Implementation
+
+- ~~https://github.com/marketplace/actions/get-release is used to get the id of the last release~~
+- ~~https://github.com/softprops/action-gh-release is used to create the new release~~
+- ~~https://github.com/irongut/EditRelease is used to edit the release if it already exists~~
+- Instead of using multiple poorly maintained I instead opted to make heavy use of `actions/github-script@v7`
+- ~~`git log --pretty=oneline tagA...tagB` is used to get the commit messages since the last release~~
+- It turned out github automatic release notes are good enough
+
 ## Run Sample App Locally
 
 ```sh
 docker build --build-arg APP_VERSION=local -t action-deployment-poc:local .
 docker run -p 7890:80 action-deployment-poc:local
 ```
+
+# Initial setup
+
+- The latest state of the main branch should be deployed to production
+- A date tag and release should be up to date with the latest state of the main branch
