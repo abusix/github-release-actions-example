@@ -1,0 +1,12 @@
+name: Production Deploy
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ensure a tag was selected
+        run: |
+          echo ${{github.ref_name}}
