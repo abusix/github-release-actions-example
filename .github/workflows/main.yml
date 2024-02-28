@@ -3,8 +3,6 @@ name: Main
 on:
   push:
     branches: ["main"]
-  pull_request: # TODO remove this line after testing
-    branches: ["main"]
 
 env:
   REGISTRY: ghcr.io
