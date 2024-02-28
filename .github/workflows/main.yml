@@ -45,35 +45,40 @@ jobs:
         with:
           tag: ${{ env.RELEASE_VERSION }}
 
-      - name: Get pending release
-        uses: joutvhu/get-release@v1
-        id: get_pending_release
-        with:
-          prerelease: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Get latest release
-        uses: joutvhu/get-release@v1
-        id: get_latest_release
-        with:
-          latest: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Delete existing pending release
+      - name: Upsert pending release
         uses: actions/github-script@v7
-        if: steps.get_pending_release.outputs.id != ''
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { owner, repo } = context.repo;
-            await github.repos.deleteRelease({ owner, repo, release_id: ${{ steps.get_pending_release.outputs.id }} });
+            /* We should only need to load 2 releases, as either both will be latest, or one will be latest and
+             * the other will be pending. We're loading a few extras here in case we get into a weird state.
+             */
+            const PAGE_SIZE = 5;
+            const releases = await github.repos.listReleases({ owner, repo });
 
-      - name: Create pending release
-        uses: softprops/action-gh-release@v1
-        if: steps.get_pending_release.outputs.id == ''
-        with:
-          prerelease: true
-          tag_name: ${{ env.RELEASE_VERSION }}
-          generate_release_notes: true
+            const pendingReleases = releases.data.filter(release => release.prerelease);
+            if (pendingReleases.length > 1) {
+              throw new Error(`Found more than one pending release: ${pendingReleases.map(release => release.tag_name).join(', ')}`);
+            }
+
+            const latestRelease = releases.data.find(release => !release.prerelease);
+            if (!latestRelease) {
+              throw new Error('No latest release found');
+            }
+
+            if (pendingReleases.length === 1) {
+              console.log(`Found existing pending release: ${pendingReleases[0].tag_name}, replacing it`);
+              await github.repos.deleteRelease({ owner, repo, release_id: pendingReleases[0].id });
+            }
+
+            console.log('No pending release found, creating one');
+            const newRelease = await github.repos.createRelease({
+              owner,
+              repo,
+              prerelease: true,
+              tag_name: ${{ env.RELEASE_VERSION }},
+              name: ${{ env.RELEASE_VERSION }},
+              generate_release_notes: true,
+            });
+            console.log(`Created pending release: ${newRelease.data.tag_name}`);
