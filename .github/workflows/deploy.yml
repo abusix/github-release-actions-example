@@ -17,27 +17,33 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { owner, repo } = context.repo;
-            /* 
-             * We should only need to load 1 release here, as pending should be at the top of the list.
-             * We're loading a few extras here in case we get into a weird state.
-             */
+            /*
+            * We should only need to load 1 release here, as pending should be at the top of the list.
+            * We're loading a few extras here in case we get into a weird state.
+            */
             const PAGE_SIZE = 5;
             const releases = await github.rest.repos.listReleases({ owner, repo });
-
-            const pendingReleases = releases.data.filter(release => release.prerelease);
+          
+            const pendingReleases = releases.data.filter((release) => release.prerelease);
             if (pendingReleases.length > 1) {
-              throw new Error(`Found more than one pending release: ${pendingReleases.map(release => release.tag_name).join(', ')}`);
+              throw new Error(
+                `Found more than one pending release: ${pendingReleases
+                  .map((release) => release.tag_name)
+                  .join(", ")}`
+              );
             }
-
-            const targetRelease = pendingReleases.find(release => release.tag_name === "${{github.ref_name}}");
+          
+            const targetRelease = pendingReleases.find(
+              (release) => release.tag_name === "${{github.ref_name}}"
+            );
             if (!targetRelease) {
-              throw new Error(`No pending release found for tag: ${github.ref_name}`);
+              throw new Error(`No pending release found for tag: ${{github.ref_name}}`);
             }
-
-            console.log(`Found pending release ${targetRelease.id}, proceeding with deployment: ${targetRelease.url}`);
-            return {
-              releaseId: targetRelease.id,
-            }
+          
+            console.log(
+              `Found pending release ${targetRelease.id}, proceeding with deployment: ${targetRelease.url}`
+            );
+            return targetRelease.id;
 
       - name: Log in to the Container registry
         uses: docker/login-action@v3
@@ -64,7 +70,7 @@ jobs:
             await github.rest.repos.updateRelease({
               owner,
               repo,
-              release_id: ${{ steps.validate_deployment.outputs.result.releaseId }},
+              release_id: ${{ steps.validate_deployment.outputs.result }},
               prerelease: false,
               make_latest: true
             });
