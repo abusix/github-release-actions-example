@@ -77,8 +77,8 @@ jobs:
               owner,
               repo,
               prerelease: true,
-              tag_name: ${{ env.RELEASE_VERSION }},
-              name: ${{ env.RELEASE_VERSION }},
+              tag_name: "${{ env.RELEASE_VERSION }}",
+              name: "${{ env.RELEASE_VERSION }}",
               generate_release_notes: true,
             });
             console.log(`Created pending release: ${newRelease.data.tag_name}`);
