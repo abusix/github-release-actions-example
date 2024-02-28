@@ -2,6 +2,7 @@ name: Production Deploy
 
 on:
   workflow_dispatch:
+  push:
 
 jobs:
   deploy:
