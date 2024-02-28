@@ -7,8 +7,9 @@ Proof-of-concept for a deployment/rollback flow using github actions and release
 - When a merge is done to the `main` branch, a pending release should be created / updated
   - A tag should be created and used for the release based on the current date and time
   - The release should be created with the tag and the release notes should be the commit messages since the last release
-  - The release should be marked as a draft
+  - The release should be marked as a prerelease
   - Any artifacts required for the deployment should be uploaded to the release
+  - The release should be automatically deployed to the `staging` (`dev`) environment
 - When the release action is manually triggered
   - The release should be marked as a non-draft
   - A deployment should be done to the `production` environment
