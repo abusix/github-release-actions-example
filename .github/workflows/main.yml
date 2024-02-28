@@ -80,4 +80,4 @@ jobs:
               name: "${{ env.RELEASE_VERSION }}",
               generate_release_notes: true,
             });
-            console.log(`Created pending release: ${newRelease.data.tag_name}`);
+            console.log(`Created pending release: ${newRelease.data.html_url}`);
