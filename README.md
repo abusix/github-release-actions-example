@@ -29,3 +29,8 @@ Proof-of-concept for a deployment/rollback flow using github actions and release
 docker build --build-arg APP_VERSION=local -t action-deployment-poc:local .
 docker run -p 7890:80 action-deployment-poc:local
 ```
+
+# Initial setup
+
+- The latest state of the main branch should be deployed to production
+- A date tag and release should be up to date with the latest state of the main branch
