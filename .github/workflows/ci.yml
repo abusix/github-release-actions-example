@@ -9,5 +9,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Build the Docker image
-        run: docker build . -t action-deployment-poc:$(date '+%Y-%m-%d_%l-%M')
+      - name: Test building the docker image
+        run: docker build .
