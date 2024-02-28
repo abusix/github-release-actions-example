@@ -39,8 +39,15 @@ jobs:
       #     build-args: |
       #       APP_VERSION=${{ env.RELEASE_VERSION }}
 
+      - name: Create tag
+        uses: rickstaa/action-create-tag@v1
+        id: "tag_create"
+        with:
+          tag: ${{ env.RELEASE_VERSION }}
+
       - name: Get pending release
         uses: joutvhu/get-release@v1
+        id: get_pending_release
         with:
           prerelease: true
         env:
@@ -48,7 +55,30 @@ jobs:
 
       - name: Get latest release
         uses: joutvhu/get-release@v1
+        id: get_latest_release
         with:
           latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate release notes
+        run: |
+          echo "RELEASE_NOTES=$(git log --pretty=format:'- %s' ${{ steps.get_latest_release.outputs.tag_name }}..${{ env.RELEASE_VERSION }})"
+          echo "RELEASE_NOTES=$(git log --pretty=format:'- %s' ${{ steps.get_latest_release.outputs.tag_name }}..${{ env.RELEASE_VERSION }})" >> $GITHUB_ENV
+
+      - name: Delete existing pending release
+        uses: actions/github-script@v7
+        if: steps.get_pending_release.outputs.id != ''
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { owner, repo } = context.repo;
+            await github.repos.deleteRelease({ owner, repo, release_id: ${{ steps.get_pending_release.outputs.id }} });
+
+      - name: Create pending release
+        uses: softprops/action-gh-release@v1
+        if: steps.get_pending_release.outputs.id == ''
+        with:
+          prerelease: true
+          tag_name: ${{ env.RELEASE_VERSION }}
+          generate_release_notes: true
