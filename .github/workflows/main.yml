@@ -55,7 +55,7 @@ jobs:
              * the other will be pending. We're loading a few extras here in case we get into a weird state.
              */
             const PAGE_SIZE = 5;
-            const releases = await github.repos.listReleases({ owner, repo });
+            const releases = await github.rest.repos.listReleases({ owner, repo });
 
             const pendingReleases = releases.data.filter(release => release.prerelease);
             if (pendingReleases.length > 1) {
@@ -69,11 +69,11 @@ jobs:
 
             if (pendingReleases.length === 1) {
               console.log(`Found existing pending release: ${pendingReleases[0].tag_name}, replacing it`);
-              await github.repos.deleteRelease({ owner, repo, release_id: pendingReleases[0].id });
+              await github.rest.repos.deleteRelease({ owner, repo, release_id: pendingReleases[0].id });
             }
 
             console.log('No pending release found, creating one');
-            const newRelease = await github.repos.createRelease({
+            const newRelease = await github.rest.repos.createRelease({
               owner,
               repo,
               prerelease: true,
