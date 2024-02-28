@@ -1,0 +1,78 @@
+name: Production Deploy
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: write # Write is required to create/update releases
+    steps:
+      - name: Ensure pre-requisites for rollback are met
+        id: validate_rollback
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { owner, repo } = context.repo;
+            /*
+            * We load 20 releases here, it's unlikely that we will want to roll back
+            * to a release older than that.
+            */
+            const PAGE_SIZE = 20;
+            const releases = await github.rest.repos.listReleases({ owner, repo });
+          
+            // Pre-releases should not be considered for rollback
+            const availableReleases = releases.data.filter((release) => !release.prerelease);
+          
+            const targetRelease = availableReleases.find(
+              (release) => release.tag_name === "${{github.ref_name}}"
+            );
+            if (!targetRelease) {
+              throw new Error(`No recent release found for tag: ${{github.ref_name}}`);
+            }
+          
+            console.log(
+              `Found release ${targetRelease.id}, proceeding with rollback: ${targetRelease.url}`
+            );
+            return targetRelease.id;
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy to Production
+        # To emulate deployments here we are simply shifting the latest tag to the appropriate docker image.
+        # In a real world scenario, you would replace this with your actual deployment steps.
+        run: |
+          docker pull ghcr.io/${{ github.repository }}:${{github.ref_name}}
+          docker tag ghcr.io/${{ github.repository }}:${{github.ref_name}} ghcr.io/${{ github.repository }}:latest
+          docker push ghcr.io/${{ github.repository }}:latest
+
+      - name: Update latest pointer
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { owner, repo } = context.repo;
+            const previousLatestRelease = await github.rest.repos.getLatestRelease({
+              owner,
+              repo,
+            });
+            await github.rest.repos.updateRelease({
+              owner,
+              repo,
+              release_id: previousLatestRelease.data.id,
+              make_latest: false
+            });
+            await github.rest.repos.updateRelease({
+              owner,
+              repo,
+              release_id: ${{ steps.validate_rollback.outputs.result }},
+              make_latest: true
+            });
