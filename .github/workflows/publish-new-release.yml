@@ -25,7 +25,7 @@ jobs:
             const releases = await github.rest.repos.listReleases({
               owner,
               repo,
-              page: PAGE_SIZE,
+              per_page: PAGE_SIZE,
             });
           
             const pendingReleases = releases.data.filter((release) => release.prerelease);
