@@ -3,6 +3,11 @@ name: Publish New Release
 on:
   workflow_dispatch:
 
+# Ensure only one instance of either this or the deploy workflow is running at a time
+# This ensures that we don't put production into an inconsistent state
+concurrency:
+  group: 'prod-deployment'
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
