@@ -20,7 +20,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const script = require('./scripts/validate-prerelease.js');
+            const script = require('${{ github.workspace }}/.github/workflows/scripts/validate-prerelease.js');
             const result = await script({github, context, core}, ${{github.ref_name}});
             console.log('Validation complete');
             console.log(result);
@@ -46,5 +46,5 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const script = require('./scripts/reconcile-release.js');
+            const script = require('${{ github.workspace }}/.github/workflows/scripts/reconcile-release.js');
             await script({github, context, core}, ${{ steps.validate_deployment.outputs.result.releaseId }});
