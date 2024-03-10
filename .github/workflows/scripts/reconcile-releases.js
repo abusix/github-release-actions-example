@@ -22,7 +22,9 @@ module.exports = async ({ github, context }, targetReleaseId) => {
       }
     );
     let prereleases = [];
+    let currentPage = 1;
     for await (const value of releasesIterator) {
+      console.log(`Searching through release page #${currentPage}`);
       prereleases = prereleases.concat(
         value.data.filter((release) => release.prerelease)
       );

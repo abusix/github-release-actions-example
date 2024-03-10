@@ -14,8 +14,7 @@ async function findRelease({ github, context }, targetTagName) {
   );
   let currentPage = 1;
   for await (const value of releasesIterator) {
-    console.log(`Searching through release page ${currentPage}`)
-    console.log(value.data);
+    console.log(`Searching through release page #${currentPage}`);
     const matchingRelease = value.data.find(
       (release) => release.tag_name === targetTagName
     );
@@ -31,15 +30,12 @@ async function findRelease({ github, context }, targetTagName) {
   return null;
 }
 
-module.exports = async ({ github, context }, targetReleaseTag) => {
+module.exports = async ({ github, context }, targetTagName) => {
   const { owner, repo } = context.repo;
 
-  const targetRelease = await findRelease(
-    { github, context },
-    targetReleaseTag
-  );
+  const targetRelease = await findRelease({ github, context }, targetTagName);
   if (!targetRelease) {
-    throw new Error(`No release found for tag: ${targetReleaseTag}`);
+    throw new Error(`No release found for tag: ${targetTagName}`);
   }
   if (targetRelease.draft) {
     throw new Error(
