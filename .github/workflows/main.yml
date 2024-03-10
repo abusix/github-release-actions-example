@@ -4,8 +4,8 @@ on:
   push:
     branches: ["main"]
 
-# Ensure only one instance of the workflow is running at a time
-# This helps with race conditions when upserting releases
+# Ensure only one instance of the workflow is running at a time.
+# This helps with race conditions when upserting releases.
 concurrency:
   group: "main"
 

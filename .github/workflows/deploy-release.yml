@@ -3,8 +3,8 @@ name: Deploy Existing Release
 on:
   workflow_dispatch:
 
-# Ensure only one instance of either this or the publish workflow is running at a time
-# This ensures that we don't put production into an inconsistent state
+# Ensure only one instance of either this is running at a time.
+# This ensures that we don't put production into an inconsistent state.
 concurrency:
   group: 'prod-deployment'
 
