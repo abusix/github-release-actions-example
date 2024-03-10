@@ -47,5 +47,5 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const script = require('./scripts/create-prerelease.js');
-            await script({github, context, core});
+            const createPrerelease = require('./scripts/create-prerelease.js');
+            await createPrerelease({github, context, core}, "${{ env.RELEASE_VERSION }}");

@@ -1,0 +1,50 @@
+name: Deploy Existing Release
+
+on:
+  workflow_dispatch:
+
+# Ensure only one instance of either this or the publish workflow is running at a time
+# This ensures that we don't put production into an inconsistent state
+concurrency:
+  group: 'prod-deployment'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: write # Write is required to create/update releases
+    steps:
+      - name: Perform pre-deployment checks
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const script = require('./scripts/validate-prerelease.js');
+            const result = await script({github, context, core}, ${{github.ref_name}});
+            console.log('Validation complete');
+            console.log(result);
+            return result;
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy to Production
+        # To emulate deployments here we are simply shifting the latest tag to the appropriate docker image.
+        # In a real world scenario, you would replace this with your actual deployment steps.
+        run: |
+          docker pull ghcr.io/${{ github.repository }}:${{github.ref_name}}
+          docker tag ghcr.io/${{ github.repository }}:${{github.ref_name}} ghcr.io/${{ github.repository }}:latest
+          docker push ghcr.io/${{ github.repository }}:latest
+
+      - name: Update latest pointer
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const script = require('./scripts/reconcile-release.js');
+            await script({github, context, core}, ${{ steps.validate_deployment.outputs.result.releaseId }});

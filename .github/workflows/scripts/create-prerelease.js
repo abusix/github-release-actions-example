@@ -1,10 +1,10 @@
-module.exports = async ({ github, context }) => {
+module.exports = async ({ github, context }, tag) => {
   const { owner, repo } = context.repo;
 
   await github.rest.git.createRef({
     owner,
     repo,
-    ref: "refs/tags/${{ env.RELEASE_VERSION }}",
+    ref: `refs/tags/${tag}`,
     sha: context.sha,
   });
 
@@ -12,8 +12,8 @@ module.exports = async ({ github, context }) => {
     owner,
     repo,
     prerelease: true,
-    tag_name: "${{ env.RELEASE_VERSION }}",
-    name: "${{ env.RELEASE_VERSION }}",
+    tag_name: tag,
+    name: tag,
     generate_release_notes: true,
   });
 
