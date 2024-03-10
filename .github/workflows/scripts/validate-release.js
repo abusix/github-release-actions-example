@@ -13,17 +13,18 @@ async function findRelease({ github, context }, targetTagName) {
     }
   );
 
-  let currentIter = await releasesIterator.next();
   let currentPage = 1;
-  while (!currentIter.done && currentPage <= MAX_PAGE_SEARCH) {
-    const matchingRelease = currentIter.value.data.find(
+  for await (const value of releasesIterator) {
+    const matchingRelease = value.data.find(
       (release) => release.tag_name === targetTagName
     );
     if (matchingRelease) {
       return matchingRelease;
     }
     currentPage++;
-    currentIter = await releasesIterator.next();
+    if (currentPage > MAX_PAGE_SEARCH) {
+      break;
+    }
   }
   return null;
 }

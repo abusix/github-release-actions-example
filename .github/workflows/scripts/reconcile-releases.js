@@ -14,7 +14,6 @@ module.exports = async ({ github, context }, targetReleaseId) => {
     console.log("Target is a draft release, finding prereleases to bundle up");
 
     // Collect all prereleases
-    let prereleases = [];
     const releasesIterator = github.paginate.iterator(
       github.rest.repos.listReleases,
       {
@@ -22,11 +21,15 @@ module.exports = async ({ github, context }, targetReleaseId) => {
         repo,
       }
     );
-    while (!result.done && currentPage <= MAX_PAGE_SEARCH) {
+    let prereleases = [];
+    for await (const value of releasesIterator) {
       prereleases = prereleases.concat(
-        result.value.data.filter((release) => release.prerelease)
+        value.data.filter((release) => release.prerelease)
       );
-      result = await releasesIterator.next();
+      currentPage++;
+      if (currentPage > MAX_PAGE_SEARCH) {
+        break;
+      }
     }
 
     // Determine which prereleases are older than the target release
