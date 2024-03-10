@@ -2,7 +2,9 @@
 const MAX_PAGE_SEARCH = 5;
 
 /** Find the release with the given tag name. */
-async function findRelease(github, targetTagName) {
+async function findRelease({ github, context }, targetTagName) {
+  const { owner, repo } = context.repo;
+
   const releasesIterator = github.paginate.iterator(
     github.rest.repos.listReleases,
     {
@@ -29,7 +31,10 @@ async function findRelease(github, targetTagName) {
 module.exports = async ({ github, context }, targetReleaseTag) => {
   const { owner, repo } = context.repo;
 
-  const targetRelease = await findRelease(github, targetReleaseTag);
+  const targetRelease = await findRelease(
+    { github, context },
+    targetReleaseTag
+  );
   if (!targetRelease) {
     throw new Error("No release found for tag: ${{github.ref_name}}");
   }
