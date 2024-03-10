@@ -24,7 +24,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const script = require('${{ github.workspace }}/.github/workflows/scripts/validate-release.js');
-            const result = await script({github, context, core}, ${{github.ref_name}});
+            const result = await script({github, context, core}, "${{github.ref_name}}");
             console.log('Validation complete');
             console.log(result);
             return result;
