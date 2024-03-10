@@ -12,9 +12,10 @@ async function findRelease({ github, context }, targetTagName) {
       repo,
     }
   );
-
   let currentPage = 1;
   for await (const value of releasesIterator) {
+    console.log(`Searching through release page ${currentPage}`)
+    console.log(value.data);
     const matchingRelease = value.data.find(
       (release) => release.tag_name === targetTagName
     );
@@ -23,6 +24,7 @@ async function findRelease({ github, context }, targetTagName) {
     }
     currentPage++;
     if (currentPage > MAX_PAGE_SEARCH) {
+      console.log(`Reached maximum page search, aborting`);
       break;
     }
   }
@@ -37,7 +39,7 @@ module.exports = async ({ github, context }, targetReleaseTag) => {
     targetReleaseTag
   );
   if (!targetRelease) {
-    throw new Error("No release found for tag: ${{github.ref_name}}");
+    throw new Error(`No release found for tag: ${targetReleaseTag}`);
   }
   if (targetRelease.draft) {
     throw new Error(
@@ -53,8 +55,8 @@ module.exports = async ({ github, context }, targetReleaseTag) => {
     const draftRelease = await github.rest.repos.createRelease({
       owner,
       repo,
-      tag_name: "${{github.ref_name}}",
-      name: "${{github.ref_name}}",
+      tag_name: targetTagName,
+      name: targetTagName,
       draft: true,
       prerelease: false,
       generate_release_notes: true,
