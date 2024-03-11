@@ -41,11 +41,8 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.RELEASE_VERSION }},${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:staging
           build-args: |
             APP_VERSION=${{ env.RELEASE_VERSION }}
-
-      - name: Upsert pending release
-        uses: actions/github-script@v7
+      
+      - name: Create release
+        uses: danielemery/github-release-action/create-prerelease@main
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const createPrerelease = require('${{ github.workspace }}/.github/workflows/scripts/create-prerelease.js');
-            await createPrerelease({github, context, core}, "${{ env.RELEASE_VERSION }}");
+          release-version: ${{ env.RELEASE_VERSION }}
