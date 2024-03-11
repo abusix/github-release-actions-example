@@ -46,3 +46,4 @@ jobs:
         uses: danielemery/github-release-action/create-prerelease@main
         with:
           release-version: ${{ env.RELEASE_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
