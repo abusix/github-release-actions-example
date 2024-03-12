@@ -23,7 +23,7 @@ jobs:
         id: pre_release
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          release-version: ${{ env.RELEASE_VERSION }}
+          release-version: ${{github.ref_name}}
 
       - name: Log in to the Container registry
         uses: docker/login-action@v3
