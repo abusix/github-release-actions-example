@@ -6,7 +6,7 @@ on:
 # Ensure only one instance of either this is running at a time.
 # This ensures that we don't put production into an inconsistent state.
 concurrency:
-  group: 'prod-deployment'
+  group: "prod-deployment"
 
 jobs:
   deploy:
@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Perform pre-release actions
-        uses: danielemery/github-release-action/perform-pre-release@main
+        uses: danielemery/github-release-action/perform-pre-release@main # TODO target a static release
         id: pre_release
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -41,7 +41,7 @@ jobs:
           docker push ghcr.io/${{ github.repository }}:latest
 
       - name: Perform post-release actions
-        uses: danielemery/github-release-action/perform-post-release@main
+        uses: danielemery/github-release-action/perform-post-release@main # TODO target a static release
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           release-id: ${{ steps.pre_release.outputs.releaseId }}
