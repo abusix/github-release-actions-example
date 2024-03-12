@@ -25,6 +25,12 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           release-version: ${{github.ref_name}}
 
+      # TODO remove
+      - name: Echo the outputs from the pre-release action
+        run: |
+          echo "releaseId: ${{ steps.pre_release.outputs.releaseId }}"
+          echo "isExistingRelease: ${{ steps.pre_release.outputs.isExistingRelease }}"
+
       - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
