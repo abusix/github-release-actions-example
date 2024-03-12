@@ -28,8 +28,8 @@ jobs:
       # TODO remove
       - name: Echo the outputs from the pre-release action
         run: |
-          echo "releaseId: ${{ steps.pre_release.outputs.releaseId }}"
-          echo "isExistingRelease: ${{ steps.pre_release.outputs.isExistingRelease }}"
+          echo "releaseId: ${{ steps.pre_release.outputs.release-id }}"
+          echo "isExistingRelease: ${{ steps.pre_release.outputs.is-existing-release }}"
 
       - name: Log in to the Container registry
         uses: docker/login-action@v3
@@ -50,4 +50,4 @@ jobs:
         uses: danielemery/github-release-action/perform-post-release@main # TODO target a static release
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          release-id: ${{ steps.pre_release.outputs.releaseId }}
+          release-id: ${{ steps.pre_release.outputs.release-id }}
