@@ -18,16 +18,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Perform pre-deployment checks
-        uses: actions/github-script@v7
+      - name: Perform pre-release actions
+        uses: danielemery/github-release-action/perform-pre-release@main
+        id: pre_release
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const script = require('${{ github.workspace }}/.github/workflows/scripts/validate-release.js');
-            const result = await script({github, context, core}, "${{github.ref_name}}");
-            console.log('Validation complete');
-            console.log(result);
-            return result;
+          release-version: ${{ env.RELEASE_VERSION }}
 
       - name: Log in to the Container registry
         uses: docker/login-action@v3
@@ -44,10 +40,8 @@ jobs:
           docker tag ghcr.io/${{ github.repository }}:${{github.ref_name}} ghcr.io/${{ github.repository }}:latest
           docker push ghcr.io/${{ github.repository }}:latest
 
-      - name: Update latest pointer
-        uses: actions/github-script@v7
+      - name: Perform post-release actions
+        uses: danielemery/github-release-action/perform-post-release@main
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const script = require('${{ github.workspace }}/.github/workflows/scripts/reconcile-releases.js');
-            await script({github, context, core}, ${{ steps.validate_deployment.outputs.result.releaseId }});
+          release-id: ${{ steps.pre_release.outputs.releaseId }}
