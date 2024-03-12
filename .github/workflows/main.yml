@@ -41,9 +41,9 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.RELEASE_VERSION }},${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:staging
           build-args: |
             APP_VERSION=${{ env.RELEASE_VERSION }}
-      
+
       - name: Create release
-        uses: danielemery/github-release-action/create-prerelease@main
+        uses: danielemery/github-release-action/create-prerelease@main # TODO target a static release
         with:
           release-version: ${{ env.RELEASE_VERSION }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
