@@ -1,8 +1,8 @@
-# github-release-action Example
+# github-release-actions Example
 
-This repository serves only as an example and demonstration of how to use the `github-release-action` to create and deploy releases.
+This repository serves only as an example and demonstration of how to use the `github-release-actions` to create and deploy releases.
 
-See the [github-release-action](https://github.com/danielemery/github-release-action) repository for documentation on the action itself.
+See the [github-release-actions](https://github.com/abusix/github-release-actions) repository for documentation on the action itself.
 
 ## Sample App
 
@@ -15,8 +15,8 @@ In order to demonstrate the action, a simple web page is included with src that 
 ### From Github Registry
 
 ```sh
-docker pull docker pull ghcr.io/danielemery/action-deployment-poc:latest
-docker run -p 7890:80 ghcr.io/danielemery/action-deployment-poc:latest
+docker pull docker pull ghcr.io/abusix/action-deployment-poc:latest
+docker run -p 7890:80 ghcr.io/abusix/action-deployment-poc:latest
 ```
 
 ### With Local Build
