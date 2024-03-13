@@ -9,16 +9,14 @@ concurrency:
   group: "prod-deployment"
 
 jobs:
-  deploy-production:
+  prepare-production-deployment:
     runs-on: ubuntu-latest
     permissions:
-      packages: write
-      contents: write # Write is required to create/update releases
-    environment: production
+      contents: write # Write is required to create a draft release
+    outputs:
+      release-id: ${{ steps.pre_release.outputs.release-id }}
+      is-existing-release: ${{ steps.pre_release.outputs.is-existing-release }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
       - name: Perform pre-release actions
         uses: danielemery/github-release-action/perform-pre-release@main # TODO target a static release
         id: pre_release
@@ -26,11 +24,21 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           release-version: ${{github.ref_name}}
 
-      # TODO remove
-      - name: Echo the outputs from the pre-release action
+      - name: Echo the outputs
         run: |
           echo "releaseId: ${{ steps.pre_release.outputs.release-id }}"
           echo "isExistingRelease: ${{ steps.pre_release.outputs.is-existing-release }}"
+
+  deploy-production:
+    runs-on: ubuntu-latest
+    needs: prepare-production-deployment
+    permissions:
+      packages: write
+      contents: write # Write is required to delete intermediate releases and publish the final release
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Log in to the Container registry
         uses: docker/login-action@v3
@@ -51,4 +59,4 @@ jobs:
         uses: danielemery/github-release-action/perform-post-release@main # TODO target a static release
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          release-id: ${{ steps.pre_release.outputs.release-id }}
+          release-id: ${{ needs.prepare-production-deployment.outputs.release-id }}
