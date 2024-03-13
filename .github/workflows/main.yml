@@ -44,7 +44,7 @@ jobs:
             APP_VERSION=${{ env.RELEASE_VERSION }}
 
       - name: Create release
-        uses: abusix/github-release-action/create-prerelease@main # TODO target a static release
+        uses: abusix/github-release-actions/create-prerelease@main # TODO target a static release
         with:
           release-version: ${{ env.RELEASE_VERSION }}
           github-token: ${{ secrets.GITHUB_TOKEN }}

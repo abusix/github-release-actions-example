@@ -1,8 +1,8 @@
-# github-release-action Example
+# github-release-actions Example
 
-This repository serves only as an example and demonstration of how to use the `github-release-action` to create and deploy releases.
+This repository serves only as an example and demonstration of how to use the `github-release-actions` to create and deploy releases.
 
-See the [github-release-action](https://github.com/abusix/github-release-action) repository for documentation on the action itself.
+See the [github-release-actions](https://github.com/abusix/github-release-actions) repository for documentation on the action itself.
 
 ## Sample App
 
