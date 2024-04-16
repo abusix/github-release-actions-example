@@ -18,7 +18,7 @@ jobs:
       is-existing-release: ${{ steps.pre_release.outputs.is-existing-release }}
     steps:
       - name: Perform pre-release actions
-        uses: abusix/github-release-actions/perform-pre-release@v0.1.0
+        uses: abusix/github-release-actions/perform-pre-release@PLA-1131-additional-outputs
         id: pre_release
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -26,8 +26,9 @@ jobs:
 
       - name: Echo the outputs
         run: |
-          echo "releaseId: ${{ steps.pre_release.outputs.release-id }}"
-          echo "isExistingRelease: ${{ steps.pre_release.outputs.is-existing-release }}"
+          echo "release-id: ${{ steps.pre_release.outputs.release-id }}"
+          echo "is-existing-release: ${{ steps.pre_release.outputs.is-existing-release }}"
+          echo "release-url ${{ steps.pre_release.outputs.release-url }}"
 
   deploy-production:
     runs-on: ubuntu-latest
@@ -56,7 +57,7 @@ jobs:
           docker push ghcr.io/${{ github.repository }}:latest
 
       - name: Perform post-release actions
-        uses: abusix/github-release-actions/perform-post-release@v0.1.0
+        uses: abusix/github-release-actions/perform-post-release@PLA-1131-additional-outputs
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           release-id: ${{ needs.prepare-production-deployment.outputs.release-id }}

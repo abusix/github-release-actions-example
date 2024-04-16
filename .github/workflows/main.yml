@@ -44,7 +44,7 @@ jobs:
             APP_VERSION=${{ env.RELEASE_VERSION }}
 
       - name: Create release
-        uses: abusix/github-release-actions/create-prerelease@v0.1.0
+        uses: abusix/github-release-actions/create-prerelease@PLA-1131-additional-outputs
         with:
           release-version: ${{ env.RELEASE_VERSION }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
