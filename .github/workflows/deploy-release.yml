@@ -58,6 +58,11 @@ jobs:
 
       - name: Perform post-release actions
         uses: abusix/github-release-actions/perform-post-release@PLA-1131-additional-outputs
+        id: post_release
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           release-id: ${{ needs.prepare-production-deployment.outputs.release-id }}
+
+      - name: Echo the outputs
+        run: |
+          echo "release-url: ${{ steps.post_release.outputs.release-url }}"
