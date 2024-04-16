@@ -22,7 +22,7 @@ jobs:
     steps:
       - name: Generate version based on date
         id: generate-version
-        run: echo "RELEASE_VERSION=$(date '+%Y-%m-%d_%H_%M')" >> $GITHUB_ENV
+        run: echo "RELEASE_VERSION=$(date '+%Y-%m-%d_%H_%M')" >> $GITHUB_OUTPUT
       - name: Test output
         run: echo ${{ steps.generate-version.outputs.RELEASE_VERSION }}
 
