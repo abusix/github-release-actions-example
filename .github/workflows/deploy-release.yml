@@ -18,7 +18,7 @@ jobs:
       is-existing-release: ${{ steps.pre_release.outputs.is-existing-release }}
     steps:
       - name: Perform pre-release actions
-        uses: abusix/github-release-actions/perform-pre-release@pla-1132-update-prereleases-when-an-intermediate-prerelease-is
+        uses: abusix/github-release-actions/perform-pre-release@v0.2.1
         id: pre_release
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -57,7 +57,7 @@ jobs:
           docker push ghcr.io/${{ github.repository }}:latest
 
       - name: Perform post-release actions
-        uses: abusix/github-release-actions/perform-post-release@pla-1132-update-prereleases-when-an-intermediate-prerelease-is
+        uses: abusix/github-release-actions/perform-post-release@v0.2.1
         id: post_release
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
